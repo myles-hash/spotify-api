@@ -1,16 +1,16 @@
-import DataBase from "@/app/components/DataBase";
+
 
 export const metadata = {
   title: "Muso Muse | Saved Albums",
   description: "Saved albums on 'Muso Muse', an album review app",
 };
 
-export default function Home({ searchParams }) {
-  console.log(searchParams);
+export default function Home() {
+
 
   return (
     <div>
-    <DataBase searchParams={searchParams}/>
+    <h1>HOME</h1>
       </div>
   )
 }

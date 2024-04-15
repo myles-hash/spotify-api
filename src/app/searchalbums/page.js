@@ -1,4 +1,4 @@
-import Form from "@/app/components/Form";
+import Form from "@/app/comps/Form";
 
 export const metadata = {
   title: "Muso Muse | Search Albums, Write Reviews",
