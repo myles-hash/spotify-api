@@ -1,4 +1,4 @@
-import CreateCommentBtn from "@/app/comps/CreateCommentBtn";
+import CreateCommentBtn from "@/app/comps/CreateCommentButton";
 import { auth } from "@clerk/nextjs";
 import { sql } from "@vercel/postgres";
 import { revalidatePath } from "next/cache";
@@ -7,11 +7,11 @@ import Link from "next/link";
 
 export default async function SinglePost({ params }) {
     const {userId} = auth();
+    
+    const review = await sql`SELECT * FROM reviews WHERE id = ${params.postid}`;
 
-    const post = await sql`SELECT * FROM posts WHERE id = ${params.postid}`;
 
-
-    const comments = await sql`SELECT * FROM comments where post_id = ${params.postid} ORDER BY id asc`;
+    const comments = await sql`SELECT * FROM comments where review_id = ${params.postid} ORDER BY id asc`;
 
     const currentUsername = await sql`SELECT username FROM profiles where clerk_user_id = ${userId} `;
 
@@ -23,25 +23,36 @@ export default async function SinglePost({ params }) {
         const username = formData.get("username");
         const content = formData.get("content");
     
-        await sql`INSERT INTO comments (username, content, post_id, user_id) VALUES (${username}, ${content}, ${params.postid}, ${userId})`;
+        await sql`INSERT INTO comments (username, content, review_id, user_id) VALUES (${username}, ${content}, ${params.postid}, ${userId})`;
         revalidatePath(`/${params.postid}`);
         }
     
   
-    return (
-        <div>
-            <h3>{post.rows[0].title}</h3>
-            <p>{post.rows[0].content}</p>
-            {userId === post.rows[0].user_id  && <Link href={`/profiles/${params.profileId}/posts/${params.postid}/edit`}>Edit</Link>}
-
-        {userId && <form action={handleAddComment}>
+        return (
+          <>
+          <div className="albumGrid">
+              {review.rows.map((dbAlbum) => (
+                  <div className="albumContainer" key={dbAlbum.album_id}>
+                      <div className="albumImage" style={{ backgroundImage: `url(${dbAlbum.album_image_url})` }}></div>
+                      <div className="albumInfo">
+                          <h3>{dbAlbum.album_name}</h3>
+                          <Link href={dbAlbum.spotify_link} target='_blank' className="link play-album-link"><strong>PLAY</strong></Link>
+                          <p>Artist: <strong>{dbAlbum.album_artist}</strong></p>
+                          <p>Score: <strong>{dbAlbum.album_score} / 5</strong></p>
+                          <p>Review: <strong>{dbAlbum.album_review}</strong></p>
+                          <p>Favourite Track: <strong>{dbAlbum.fav_track}</strong></p>
+                      </div>
+                  </div>
+              ))}
+          </div>
+          <div>
+          <form action={handleAddComment}>
             <h4>Add a comment</h4>
             <input name="username" placeholder="Username" defaultValue={currentUsername.rows[0].username} value={currentUsername.rows[0].username} readOnly/>
              <textarea name="content" placeholder="Content"></textarea>
              <CreateCommentBtn />
-         </form>}
-         {!userId && <h2>Please sign in to add comments</h2>}
-
+         </form>
+         <h2>Comments</h2>
          {comments.rows.map((comment) => {
         return (
           <div key={comment.id}>
@@ -54,6 +65,7 @@ export default async function SinglePost({ params }) {
           </div>
         );
       })}
-        </div>
-    );
+      </div>
+    </>
+  )
 }

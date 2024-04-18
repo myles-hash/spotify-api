@@ -52,7 +52,7 @@ CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     username text,
     content text,
-    post_id INT REFERENCES posts(id)
+    review_id INT REFERENCES reviews(id)
 );
 
 INSERT INTO comments (username, content, post_id) VALUES
@@ -73,3 +73,4 @@ username text,
 bio text
 );
 
+ALTER TABLE reviews ADD user_id text;

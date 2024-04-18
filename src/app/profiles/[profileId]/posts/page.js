@@ -45,15 +45,15 @@ export default async function ProfilePage({ params, searchParams  }) {
       }
 
 
-      async function handleCreatePost(formData) {
-        "use server";
-        const title = formData.get("title");
-        const content = formData.get("content");
+    //   async function handleCreatePost(formData) {
+    //     "use server";
+    //     const title = formData.get("title");
+    //     const content = formData.get("content");
 
-        await sql`INSERT INTO posts (title, content, user_id) VALUES (${title}, ${content}, ${userId})`;
+    //     await sql`INSERT INTO posts (title, content, user_id) VALUES (${title}, ${content}, ${userId})`;
 
-        revalidatePath(`/profiles/${params.profileId}/posts`);
-    }
+    //     revalidatePath(`/profiles/${params.profileId}/posts`);
+    // }
 
 
 
@@ -86,16 +86,10 @@ export default async function ProfilePage({ params, searchParams  }) {
                </div>
                 )}
                 
-                 <h1>Posts by {profile.rows[0].username}</h1>
-      {userId === profile.rows[0].clerk_user_id && (<form action={handleCreatePost}>
-        <h4>Add a new post</h4>
-        <input name="title" placeholder="Post Title" />
-        <textarea name="content" placeholder="Post content" ></textarea>
-        <CreatePostBtn />
-      </form>) && (<DataBase searchParams={searchParams}/>)}
+                 <h1>Reviews by {profile.rows[0].username}</h1>
+      {userId === profile.rows[0].clerk_user_id && (
+        <DataBase searchParams={searchParams}/>)}
       {!userId && <div><h2>Please... Sign in to add posts</h2></div>}
-     
-            <ScrollAreaDemo posts={posts} profileId={params.profileId}/>
                </div>
     )
 

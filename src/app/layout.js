@@ -27,19 +27,13 @@ export default async function RootLayout({ children }) {
       <header><p className="header-title">MUS0 MUSE</p>
       <nav className="nav-link">
            <Link href ="/">HOME</Link> | <Link href ="/about">ABOUT</Link> | <Link href="/profiles">PROFILES</Link> |
-           {userId && profileRes.rowCount !== 0 && (
-  <div>
-    <Link href={`/profiles/${profileRes.rows[0].id}/posts`}>MY PROFILE</Link> |
-    <Link href="/searchalbums" className="nav-link">SEARCH ALBUMS</Link>
-  </div>
-)}
+           {userId && profileRes.rowCount !== 0 && (<Link href={`/profiles/${profileRes.rows[0].id}/posts`}>MY PROFILE |</Link>)( <Link href="/searchalbums">SEARCH ALBUMS</Link>)}
         </nav>
         {!userId && <div><Link href="/sign-in">SIGN IN</Link>{children}</div>}
         {userId && <UserButton afterSignOutUrl="/" />}
         {userId && profileRes.rowCount === 0 && <CreateProfile />}
         {userId && profileRes.rowCount !== 0 && children}
       </header>
-        {/* {children} */}
         <footer>Property of Myles &copy;</footer>
         </body>
     </html>
